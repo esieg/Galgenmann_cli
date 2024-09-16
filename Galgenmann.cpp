@@ -14,7 +14,6 @@ class Gallows {
         std::string word; // the word for guessing
         std::map<char, bool> wordDict; // map that contains every character of the word and a bool if charactere was found
         std::vector<char> failed_guesses; // a list of every failed guess until now
-        uint error_count = 0; // counter of the failed guesses
         int result = 0; // tristate result: 0 - continue, 1 - win, -1 - lose
 
     void choose_word() {
@@ -68,7 +67,7 @@ class Gallows {
 
     void draw_gallows() {
         /*Draw the gallows, state is depending on the error count*/
-        switch (error_count) {
+        switch (failed_guesses.size()) {
             case 9:
                 std::cout << " ||========\n || /   |\n ||/    O\n ||    /|\\ \n ||    / \\ \n ||\n============\n";
                 break;
@@ -105,7 +104,7 @@ class Gallows {
     void draw_failure() {
         /*Draw the "failure screen"*/
         draw_gallows();
-        std::cout << "\nFehlerhafte Versuche: " << error_count << " von " << dead_num << std::endl;
+        std::cout << "\nFehlerhafte Versuche: " << failed_guesses.size() << " von " << dead_num << std::endl;
         for (char c : failed_guesses) {
             std::cout << c << " ";
         }
@@ -130,7 +129,7 @@ class Gallows {
             }
         }
         // Bad Case: Error Counter hit the dead_num (or above)
-        if (dead_num <= error_count) {
+        if (dead_num <= failed_guesses.size()) {
             result = -1;
         }
     }
@@ -144,7 +143,6 @@ class Gallows {
         if (wordDict.find(guess) != wordDict.end()) {
             wordDict[guess] = true;
         } else {
-            error_count = error_count + 1;
             failed_guesses.push_back(guess);
         }
 
